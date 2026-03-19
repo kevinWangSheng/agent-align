@@ -34,15 +34,21 @@ Lightweight freshness check. Scans for recent changes and updates existing knowl
 
 ## Install
 
+**One command — clone + symlink, auto-updates with `git pull`:**
+
 ```bash
-git clone https://github.com/kevinWangSheng/agent-align.git
-cd agent-align
-bash install.sh
+curl -fsSL https://raw.githubusercontent.com/kevinWangSheng/agent-align/main/install.sh | bash
 ```
 
-Or manually copy the skill directories into `~/.claude/skills/`.
+The script clones the repo to `~/.agent-align/` and creates symlinks in `~/.claude/skills/`. All three agents read that directory natively — no further setup needed.
 
-### OpenCode Remote Discovery
+**Update skills later:**
+
+```bash
+git -C ~/.agent-align pull
+```
+
+### OpenCode Remote Discovery (no git needed)
 
 ```bash
 opencode skill add https://raw.githubusercontent.com/kevinWangSheng/agent-align/main/

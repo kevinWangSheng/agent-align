@@ -1,34 +1,60 @@
 #!/usr/bin/env bash
 # agent-align installer
-# Installs /align and /align-check skills for Claude Code, OpenCode, and Qoder.
-# All three agents natively read skills from ~/.claude/skills/.
+# Clones (or updates) the repo and symlinks skills into ~/.claude/skills/.
+# After install, `git pull` inside the repo keeps skills up to date automatically.
 
 set -e
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_URL="https://github.com/kevinWangSheng/agent-align.git"
+INSTALL_DIR="${AGENT_ALIGN_DIR:-$HOME/.agent-align}"
 SKILLS_DIR="$HOME/.claude/skills"
 
-echo "Installing agent-align skills to $SKILLS_DIR ..."
+# ── Clone or update ──────────────────────────────────────────────────────────
+if [ -d "$INSTALL_DIR/.git" ]; then
+  echo "Updating $INSTALL_DIR ..."
+  git -C "$INSTALL_DIR" pull --ff-only
+else
+  echo "Cloning into $INSTALL_DIR ..."
+  git clone --depth 1 "$REPO_URL" "$INSTALL_DIR"
+fi
 
-# align
-mkdir -p "$SKILLS_DIR/align/references"
-cp "$REPO_DIR/align/SKILL.md" "$SKILLS_DIR/align/SKILL.md"
-cp "$REPO_DIR/align/references/source-registry.md" "$SKILLS_DIR/align/references/source-registry.md"
-cp "$REPO_DIR/align/references/synthesis-guide.md" "$SKILLS_DIR/align/references/synthesis-guide.md"
+# ── Symlink skills ────────────────────────────────────────────────────────────
+mkdir -p "$SKILLS_DIR"
 
-# align-check
-mkdir -p "$SKILLS_DIR/align-check"
-cp "$REPO_DIR/align-check/SKILL.md" "$SKILLS_DIR/align-check/SKILL.md"
+for skill_dir in "$INSTALL_DIR"/*/; do
+  skill_name="$(basename "$skill_dir")"
+  # skip non-skill dirs
+  [ -f "$skill_dir/SKILL.md" ] || continue
 
+  target="$SKILLS_DIR/$skill_name"
+  if [ -L "$target" ]; then
+    # already a symlink — update if pointing elsewhere
+    current="$(readlink "$target")"
+    if [ "$current" != "$skill_dir" ]; then
+      ln -sfn "$skill_dir" "$target"
+      echo "  updated symlink: $target"
+    fi
+  elif [ -d "$target" ]; then
+    echo "  warning: $target exists as a real directory, skipping (remove it manually to use the symlink)"
+  else
+    ln -s "$skill_dir" "$target"
+    echo "  linked: $target -> $skill_dir"
+  fi
+done
+
+# ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
-echo "Done. Skills installed:"
-echo "  ~/.claude/skills/align/"
-echo "  ~/.claude/skills/align-check/"
+echo "Done. Skills active:"
+for skill_dir in "$INSTALL_DIR"/*/; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  echo "  /$( basename "$skill_dir" )"
+done
 echo ""
-echo "Supported agents (read ~/.claude/skills/ natively):"
-echo "  Claude Code  — use /align <topic>"
-echo "  OpenCode     — use /align <topic>"
-echo "  Qoder        — use /align <topic>"
+echo "Agents supported (read ~/.claude/skills/ natively):"
+echo "  Claude Code · OpenCode · Qoder"
 echo ""
-echo "OpenCode remote discovery (alternative):"
+echo "To update skills later:"
+echo "  git -C $INSTALL_DIR pull"
+echo ""
+echo "OpenCode remote discovery (alternative, no git needed):"
 echo "  opencode skill add https://raw.githubusercontent.com/kevinWangSheng/agent-align/main/"
