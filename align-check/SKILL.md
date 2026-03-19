@@ -32,13 +32,19 @@ Quick check whether stored knowledge on `$ARGUMENTS` is still current.
 
 **Limits: max 3 WebSearch, max 3 WebFetch.**
 
-Read source-registry from `~/.claude/skills/align/references/source-registry.md`.
+Read source-registry from `~/.claude/skills/align/references/source-registry.md`. Check update frequency guide to assess topic velocity.
 
+**For fast-moving topics** (agent frameworks, MCP, coding agents):
+1. `"<topic>" site:github.com/*/releases OR site:github.com/*/blob/main/CHANGELOG.md`
+2. `"<topic> new developments 2025 2026"`
+3. (Optional) Search top Open Question from existing knowledge.
+
+**For slow-moving topics:**
 1. `"<topic> new developments 2025 2026"`
 2. `"<topic> best practices changes latest"`
 3. (Optional) Search top Open Question from existing knowledge.
 
-Select top 2-3 URLs (prefer last 3 months, high registry weight). WebFetch each.
+Select top 2-3 URLs. For fast-moving topics prefer GitHub releases and recent blog posts even if source weight is lower. WebFetch each.
 
 Focus extraction on: **what changed** since `last_verified`, new patterns/tools, contradictions to existing claims.
 

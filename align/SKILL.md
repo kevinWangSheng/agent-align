@@ -31,15 +31,31 @@ Read `~/.claude/skills/align/references/source-registry.md`. Identify relevant h
 
 **Limits: max 5 WebSearch, max 6 WebFetch.**
 
-### Searches (3-5 calls):
+### Search Strategy by Topic Velocity
+
+Before writing queries, assess how fast this topic moves:
+- **Fast-moving** (agent frameworks, MCP, coding agents, tool APIs): prioritize GitHub releases, official changelogs, recent blog posts — even weight-3 sources beat old weight-5 content
+- **Slow-moving** (foundational concepts, RAG theory, evals methodology): prioritize high-weight academic and expert sources
+
+### Searches (4-6 calls):
+
+**Always run:**
 1. `"<topic> best practices 2025 2026"`
 2. `"<topic> architecture implementation guide"`
 3. `"<topic>" site:<high-weight-domain-1> OR site:<high-weight-domain-2>` (pick from registry)
-4. `"<topic> new developments 2025 2026"`
+
+**For fast-moving topics, add:**
+4. `"<topic>" site:github.com/*/releases OR site:github.com/*/blob/main/CHANGELOG.md` — catches actual version changes
+5. `"<topic> 2025 2026" site:news.ycombinator.com OR site:reddit.com/r/LocalLLaMA` — community signal on what's current
+6. (If existing knowledge has Open Questions) Search the most important one.
+
+**For slow-moving topics, replace 4-5 with:**
+4. `"<topic> survey" site:arxiv.org`
 5. (If existing knowledge has Open Questions) Search the most important one.
 
 ### URL Selection:
 Score: `registry_weight × recency × relevance`. Take top 4-6. Prefer source diversity.
+For fast-moving topics: a 2-week-old GitHub release note outranks a 6-month-old weight-5 blog post.
 
 ### WebFetch:
 For each URL, extract:
