@@ -26,11 +26,18 @@ Lightweight freshness check. Scans for recent changes and updates existing knowl
 
 ## Supported Agents
 
-| Agent | Support | How |
-|-------|---------|-----|
-| [Claude Code](https://claude.ai/code) | Native | reads `~/.claude/skills/` |
-| [OpenCode](https://opencode.ai) | Native + Discovery | reads `~/.claude/skills/`, also supports remote pull |
-| [Qoder](https://qoder.dev) | Native | reads `~/.claude/skills/` |
+All agents use the same `SKILL.md` format — only the install path differs.
+
+| Agent | Skills Path | Install |
+|-------|-------------|---------|
+| [Claude Code](https://claude.ai/code) | `~/.claude/skills/` | auto |
+| [OpenCode](https://opencode.ai) | `~/.claude/skills/` | auto (+ remote discovery) |
+| [Cursor](https://cursor.com) | `~/.claude/skills/` | auto |
+| [Qoder](https://qoder.dev) | `~/.claude/skills/` | auto |
+| [Codex](https://github.com/openai/codex) | `~/.codex/skills/` + `~/.agents/skills/` | auto |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | `~/.gemini/skills/` | auto |
+
+`install.sh` detects which agents are present and symlinks to each agent's directory automatically.
 
 ## Install
 
