@@ -1,0 +1,20 @@
+{
+  "skills": [
+    {
+      "name": "align",
+      "description": "Search the web for a topic's latest practices, synthesize into actionable knowledge, and persist to ~/.claude/knowledge/. Use before development tasks involving fast-moving domains where training data may be outdated.",
+      "files": [
+        "SKILL.md",
+        "references/source-registry.md",
+        "references/synthesis-guide.md"
+      ]
+    },
+    {
+      "name": "align-check",
+      "description": "Quick check if stored knowledge on a topic is still current. Lighter than /align — searches for recent changes and compares against existing knowledge.",
+      "files": [
+        "SKILL.md"
+      ]
+    }
+  ]
+}

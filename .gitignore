@@ -1,0 +1,6 @@
+# Local knowledge base — never commit
+~/.claude/knowledge/
+knowledge/
+
+# OS
+.DS_Store
